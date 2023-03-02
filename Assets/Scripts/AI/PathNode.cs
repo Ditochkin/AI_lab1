@@ -1,14 +1,21 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PathNode //: MonoBehaviour
+public class PathNode : IComparable<PathNode> //: MonoBehaviour
 {
     public bool walkable;           //  Свободна для перемещения
     public Vector3 worldPosition;   //  Позиция в глобальных координатах
     private GameObject objPrefab;   //  Шаблон объекта
     public GameObject body;         //  Объект для отрисовки
-    
+    private Vector2Int gridCoord;
+
+    public Vector2Int getGridCoord()
+    {
+        return gridCoord;
+    }
+
     private PathNode parentNode = null;               //  откуда пришли
     
     /// <summary>
@@ -41,9 +48,14 @@ public class PathNode //: MonoBehaviour
         parentNode = parent;
         //  Вычисляем расстояние
         if (parent != null)
-            distance = parent.Distance + Vector3.Distance(body.transform.position, parent.body.transform.position);
+            distance = parent.Distance + Dist(this, parent);// Vector3.Distance(body.transform.position, parent.body.transform.position);
         else
             distance = float.PositiveInfinity;
+    }
+
+    public void AddAStarDistance(PathNode finish)
+    {
+        distance += Vector3.Distance(body.transform.position, finish.body.transform.position);
     }
 
     /// <summary>
@@ -52,12 +64,13 @@ public class PathNode //: MonoBehaviour
     /// <param name="_objPrefab">объект, который визуализируется в вершине</param>
     /// <param name="_walkable">проходима ли вершина</param>
     /// <param name="position">мировые координаты</param>
-    public PathNode(GameObject _objPrefab, bool _walkable, Vector3 position)
+    public PathNode(GameObject _objPrefab, bool _walkable, Vector3 position, Vector2Int _gridCoord)
     {
         objPrefab = _objPrefab;
         walkable = _walkable;
         worldPosition = position;
         body = GameObject.Instantiate(objPrefab, worldPosition, Quaternion.identity);
+        gridCoord = _gridCoord;
     }
 
     /// <summary>
@@ -68,9 +81,9 @@ public class PathNode //: MonoBehaviour
     /// <returns></returns>
     public static float Dist(PathNode a, PathNode b)
     {
-        return Vector3.Distance(a.body.transform.position, b.body.transform.position) + 40 * Mathf.Abs(a.body.transform.position.y - b.body.transform.position.y);
+        return Vector3.Distance(a.body.transform.position, b.body.transform.position) + 1000 * Math.Abs(b.body.transform.position.y - a.body.transform.position.y);
     }
-    
+
     /// <summary>
     /// Подсветить вершину - перекрасить в красный
     /// </summary>
@@ -93,5 +106,20 @@ public class PathNode //: MonoBehaviour
     public void Bad()
     {
         body.GetComponent<Renderer>().material.color = Color.red;
+    }
+
+    public int CompareTo(PathNode path)
+    {
+        if (this.distance > path.distance)
+        {
+            return 1;
+        }
+
+        else if (this.distance == path.distance)
+        {
+            return 0;
+        }
+
+        return -1;
     }
 }
