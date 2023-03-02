@@ -11,7 +11,7 @@ public class Grid : MonoBehaviour
     [SerializeField] private Terrain landscape = null;
 
     //  Шаг сетки (по x и z) для построения точек
-    [SerializeField] private int gridDelta = 20;
+    [SerializeField] private int gridDelta = 100;
 
     //  Номер кадра, на котором будет выполнено обновление путей
     private int updateAtFrame = 0;  
@@ -24,15 +24,16 @@ public class Grid : MonoBehaviour
         foreach (PathNode node in grid)
         {
             //  Пока что считаем все вершины проходимыми, без учёта препятствий
-            node.walkable = true;
-            /*node.walkable = !Physics.CheckSphere(node.body.transform.position, 1);
+            //node.walkable = true;
+
+            node.walkable = !Physics.CheckSphere(node.body.transform.position, 1);
             if (node.walkable)
                 node.Fade();
             else
             {
-                node.Illuminate();
+                node.Bad();
                 Debug.Log("Not walkable!");
-            }*/
+            }
         }
     }
 
@@ -56,6 +57,7 @@ public class Grid : MonoBehaviour
                 grid[x, z].Fade();
             }
     }
+
     /// <summary>
     /// Получение списка соседних узлов для вершины сетки
     /// </summary>

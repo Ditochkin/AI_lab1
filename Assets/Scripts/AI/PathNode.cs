@@ -76,7 +76,7 @@ public class PathNode //: MonoBehaviour
     /// </summary>
     public void Illuminate()
     {
-        body.GetComponent<Renderer>().material.color = Color.red;
+        body.GetComponent<Renderer>().material.color = Color.green;
     }
     
     /// <summary>
@@ -85,5 +85,13 @@ public class PathNode //: MonoBehaviour
     public void Fade()
     {
         body.GetComponent<Renderer>().material.color = Color.blue;
+    }
+
+    /// <summary>
+    /// Снять подсветку с вершины - перекрасить в синий
+    /// </summary>
+    public void Bad()
+    {
+        body.GetComponent<Renderer>().material.color = Color.red;
     }
 }
