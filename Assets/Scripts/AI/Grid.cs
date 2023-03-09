@@ -119,6 +119,53 @@ public class Grid : MonoBehaviour
         }
     }
 
+    void calculateDijkstra(Vector2Int startNode, Vector2Int finishNode)
+    {
+        foreach (var node in grid)
+        {
+            node.Fade();
+            node.ParentNode = null;
+        }
+
+        CheckWalkableNodes();
+
+        PathNode start = grid[startNode.x, startNode.y];
+
+        start.ParentNode = null;
+        start.Distance = 0;
+
+        var nodes = new PriorityQueue<PathNode>();
+
+        nodes.Enqueue(start);
+
+        while (nodes.Count != 0)
+        {
+            PathNode current = nodes.Dequeue();
+            Vector2Int currentCoord = current.getGridCoord();
+
+            if (currentCoord == finishNode) break;
+
+            var neighbours = GetNeighbours(currentCoord);
+
+
+            foreach (var node in neighbours)
+            {
+                if (grid[node.x, node.y].walkable && grid[node.x, node.y].Distance > grid[currentCoord.x, currentCoord.y].Distance + PathNode.Dist(grid[node.x, node.y], grid[currentCoord.x, currentCoord.y]))
+                {
+                    grid[node.x, node.y].ParentNode = grid[currentCoord.x, currentCoord.y];
+                    nodes.Enqueue(grid[node.x, node.y]);
+                }
+            }
+        }
+
+        var pathElem = grid[finishNode.x, finishNode.y];
+        while (pathElem != null)
+        {
+            pathElem.Illuminate();
+            pathElem = pathElem.ParentNode;
+        }
+    }
+
     void calculatePathAStar(Vector2Int startNode, Vector2Int finishNode)
     {
         foreach (var node in grid)

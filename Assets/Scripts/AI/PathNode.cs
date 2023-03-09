@@ -81,7 +81,7 @@ public class PathNode : IComparable<PathNode> //: MonoBehaviour
     /// <returns></returns>
     public static float Dist(PathNode a, PathNode b)
     {
-        return Vector3.Distance(a.body.transform.position, b.body.transform.position) + 1000 * Math.Abs(b.body.transform.position.y - a.body.transform.position.y);
+        return Vector3.Distance(a.body.transform.position, b.body.transform.position) + 20 * (b.body.transform.position.y - a.body.transform.position.y) * (b.body.transform.position.y - a.body.transform.position.y);
     }
 
     /// <summary>
@@ -91,7 +91,7 @@ public class PathNode : IComparable<PathNode> //: MonoBehaviour
     {
         body.GetComponent<Renderer>().material.color = Color.green;
     }
-    
+
     /// <summary>
     /// Снять подсветку с вершины - перекрасить в синий
     /// </summary>
